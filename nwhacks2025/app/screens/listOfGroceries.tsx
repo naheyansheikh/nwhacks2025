@@ -182,7 +182,7 @@ export default function HouseFamFridgeScreen() {
       
       // TODO: fix styling so that BOTH buttons show at the bottom
       <TouchableOpacity 
-        style={styles.addButton}
+        style={styles.receiptButton}
         onPress={() => router.push("/screens/foodReceiptScan")}
       >
         <Text style={styles.addButtonText}>Scan Receipt</Text>
@@ -280,6 +280,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     position: "absolute",
     bottom: 80, // Above the bottom navigation
+    left: 16,
+    right: 16,
+    alignItems: "center",
+  },
+  receiptButton: {
+    backgroundColor: "#6D8299",
+    padding: 16,
+    borderRadius: 8,
+    position: "absolute",
+    bottom: 150, // Above the bottom navigation
     left: 16,
     right: 16,
     alignItems: "center",
