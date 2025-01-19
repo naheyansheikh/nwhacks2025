@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Text,
   View,
@@ -6,11 +6,13 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons"; // Install expo-icons if not already installed
-import { useRouter } from "expo-router"; // For navigation
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 export default function Index() {
-  const router = useRouter(); // Router hook for navigation
+  const router = useRouter();
+  const [friendsExpanded, setFriendsExpanded] = useState(false);
+  const [communitiesExpanded, setCommunitiesExpanded] = useState(false);
 
   return (
     <View style={styles.container}>
@@ -28,16 +30,58 @@ export default function Index() {
       {/* Search Bar */}
       <TextInput
         style={styles.searchBar}
-        placeholder="Search All Items"
+        placeholder="Search for a community or friend"
         placeholderTextColor="#B4B8D4"
       />
 
-      {/* Fridge Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Friend</Text>
-        <TouchableOpacity>
-          <Ionicons name="chevron-forward" size={20} color="black" />
+      {/* Friends Section */}
+      <View>
+        <TouchableOpacity 
+          style={styles.section}
+          onPress={() => setFriendsExpanded(!friendsExpanded)}
+        >
+          <Text style={styles.sectionTitle}>Friends</Text>
+          <Ionicons 
+            name={friendsExpanded ? "chevron-down" : "chevron-forward"} 
+            size={20} 
+            color="black" 
+          />
         </TouchableOpacity>
+        
+        {friendsExpanded && (
+          <View style={styles.dropdownItem}>
+            <View style={styles.profileIcon}>
+              <Ionicons name="person-outline" size={20} color="black" />
+            </View>
+            <Text style={styles.dropdownText}>Joe</Text>
+          </View>
+          
+          
+        )}
+      </View>
+
+      {/* Communities Section */}
+      <View>
+        <TouchableOpacity 
+          style={styles.section}
+          onPress={() => setCommunitiesExpanded(!communitiesExpanded)}
+        >
+          <Text style={styles.sectionTitle}>Communities</Text>
+          <Ionicons 
+            name={communitiesExpanded ? "chevron-down" : "chevron-forward"} 
+            size={20} 
+            color="black" 
+          />
+        </TouchableOpacity>
+        
+        {communitiesExpanded && (
+          <View style={styles.dropdownItem}>
+            <View style={styles.profileIcon}>
+              <Ionicons name="people-outline" size={20} color="black" />
+            </View>
+            <Text style={styles.dropdownText}>University Friends</Text>
+          </View>
+        )}
       </View>
 
       {/* Bottom Navigation */}
@@ -66,7 +110,7 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#B0C4DE", // Dim pastel blue background
+    backgroundColor: "#B0C4DE",
   },
   topBar: {
     flexDirection: "row",
@@ -75,19 +119,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#A2B9CE", // Slightly darker pastel blue divider
+    borderBottomColor: "#A2B9CE",
   },
   title: {
     fontSize: 18,
-    color: "black", // Black text for contrast
+    color: "black",
     fontWeight: "bold",
   },
   searchBar: {
-    backgroundColor: "#D9E6F2", // Lighter pastel blue for input field
+    backgroundColor: "#D9E6F2",
     margin: 16,
     padding: 10,
     borderRadius: 8,
-    color: "#6D8299", // Soft gray for input text
+    color: "#6D8299",
   },
   section: {
     flexDirection: "row",
@@ -96,30 +140,50 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderTopWidth: 1,
-    borderTopColor: "#A2B9CE", // Slightly darker pastel blue
+    borderTopColor: "#A2B9CE",
   },
   sectionTitle: {
-    color: "black", // Black for visibility
+    color: "black",
     fontSize: 16,
   },
+  dropdownItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 32,
+    paddingVertical: 8,
+    backgroundColor: "#C9D6E5",
+  },
+  profileIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#D9E6F2",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  dropdownText: {
+    color: "black",
+    fontSize: 14,
+  },
   bottomNav: {
-    position: "absolute", // Position it at the bottom
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    backgroundColor: "#B0C4DE", // Match the main dim pastel blue background
+    backgroundColor: "#B0C4DE",
     paddingVertical: 12,
     borderTopWidth: 1,
-    borderTopColor: "#A2B9CE", // Slightly darker divider
+    borderTopColor: "#A2B9CE",
   },
   navItem: {
     alignItems: "center",
   },
   navText: {
-    color: "black", // Black text for buttons
+    color: "black",
     fontSize: 12,
     marginTop: 4,
   },
