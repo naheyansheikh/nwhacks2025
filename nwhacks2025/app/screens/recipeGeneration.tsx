@@ -6,6 +6,7 @@ import { GEMINI_API_KEY } from "../env";
 
 export default function RecipeGeneratorScreen() {
   const [groceries, setGroceries] = useState<string>('');
+  const [title, setTitle] = useState<string>('');
   const [recipe, setRecipe] = useState<string>('');
 
   useEffect(() => {
@@ -20,7 +21,7 @@ export default function RecipeGeneratorScreen() {
   }, []);
 
   const generateRecipe = async () => {
-    const prompt = `Create a recipe using the following ingredients: ${groceries} only list ingredients and steps and keep in concise`;
+    const prompt = `Find a recipe using the following ingredients: ${groceries} . Have dish name at the top and only list ingredients and steps and keep it concise (with no markdown and omit unused ingredients)`;
     try {
       const response = await axios.post(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
         contents: [{
@@ -32,7 +33,15 @@ export default function RecipeGeneratorScreen() {
         },
       });
       const generatedRecipe = response.data["candidates"][0]["content"]["parts"][0]["text"];
-      setRecipe(generatedRecipe); // Set the generated recipe
+
+      const removeFirstLine = (str: string) => {
+        const lines = str.split('\n');
+        lines.shift(); // Remove the first line
+        return lines.join('\n');
+      };
+
+      setTitle(generatedRecipe.split('\n')[0]);
+      setRecipe(removeFirstLine(generatedRecipe));
     } catch (error) {
       console.error('Error generating recipe:', error);
     }
@@ -48,7 +57,7 @@ export default function RecipeGeneratorScreen() {
         onChangeText={setGroceries}
       />
       <Button title="Generate Recipe" onPress={generateRecipe} />
-      <Text style={styles.recipeTitle}>Generated Recipe:</Text>
+      <Text style={styles.recipeTitle}>{ title ? title : "Generated Recipe:" }</Text>
       <Text style={styles.recipe}>{recipe}</Text>
     </View>
   );
@@ -61,7 +70,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 28,
+    fontSize: 30,
     fontWeight: "bold",
     color: "black",
     marginBottom: 20,
@@ -90,7 +99,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   recipeTitle: {
-    fontSize: 22,
+    fontSize: 25,
     fontWeight: "bold",
     color: "black",
     marginBottom: 10,
