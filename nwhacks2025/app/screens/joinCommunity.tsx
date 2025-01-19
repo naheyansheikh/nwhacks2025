@@ -28,19 +28,6 @@ export default function CommunitiesScreen() {
                     console.log("Found existing community: " + data);
                     setExistingCommunity(data);
                 }
-            } else {
-                console.log("finding existing community");
-                const { data, error } = await supabase
-                    .from("communities")
-                    .select("*")
-                    .limit(1)
-                    .single();
-    
-                if (error) {
-                    console.error("Error fetching user communities:", error);
-                } else if (data) {
-                    router.push(`/screens/community/${data.id}`);
-                }
             }
         };
 
