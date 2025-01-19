@@ -1,17 +1,65 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Text, 
   View, 
   TextInput, 
   StyleSheet, 
-  TouchableOpacity 
+  TouchableOpacity,
+  Alert 
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { supabase } from "../../services/supabaseClient";
 
 export default function AddFoodItemScreen() {
   const [foodName, setFoodName] = useState<string>("");
   const [expirationDate, setExpirationDate] = useState<string>("");
+  const [userId, setUserId] = useState<string>("");
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUserId(data?.user?.id || "");
+    };
+
+    fetchUser();
+  }, []);
+
+  const handleSave = async () => {
+    try {
+      const { error } = await supabase
+        .from('groceries')
+        .insert([
+          { 
+            name: foodName, 
+            expiration_date: expirationDate,
+            status: calculateStatus(expirationDate),
+            user_id: userId
+          }
+        ]);
+
+      if (error) {
+        console.error('Insert error:', error);
+        throw error;
+      }
+
+      Alert.alert("Success", "Food item added successfully!");
+      router.back();
+    } catch (error) {
+      console.error('Error:', error);
+      Alert.alert("Error", error.message);
+    }
+  };
+
+  const calculateStatus = (expirationDate: string) => {
+    const today = new Date();
+    const expDate = new Date(expirationDate);
+    const daysUntilExpiration = Math.ceil((expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (daysUntilExpiration < 0) return "expired";
+    if (daysUntilExpiration <= 7) return "expiring-soon";
+    return "all";
+  };
 
   return (
     <View style={styles.container}>
@@ -53,7 +101,7 @@ export default function AddFoodItemScreen() {
           onChangeText={(text) => setExpirationDate(text)}
         />
 
-        <TouchableOpacity style={styles.saveButton}>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
           <Text style={styles.saveButtonText}>Save</Text>
         </TouchableOpacity>
       </View>

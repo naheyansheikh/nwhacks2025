@@ -1,28 +1,49 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
+import { supabase } from "../../services/supabaseClient";
 
-// Sample grocery data
-const GROCERIES = [
-  { name: "Eggs", expiration: "2025-01-15", status: "expired" },
-  { name: "Milk", expiration: "2025-01-20", status: "expiring-soon" },
-  { name: "Sweet Tea", expiration: "2025-03-01", status: "all" },
-];
+type GroceryItem = {
+  id: number;
+  name: string;
+  expiration_date: string;
+  status: string;
+};
 
 export default function GroceryListScreen() {
+  const [groceries, setGroceries] = useState<GroceryItem[]>([]);
+
+  useEffect(() => {
+    fetchGroceries();
+  }, []);
+
+  const fetchGroceries = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('groceries')
+        .select('*')
+        .order('expiration_date', { ascending: true });
+
+      if (error) throw error;
+      setGroceries(data || []);
+    } catch (error) {
+      console.error('Error fetching groceries:', error);
+    }
+  };
+
   const categorizeGroceries = (status: string) =>
-    GROCERIES.filter((item) => item.status === status);
+    groceries.filter((item) => item.status === status);
 
   return (
     <View style={styles.container}>
       {/* Top Bar */}
       <View style={styles.topBar}>
-  <TouchableOpacity onPress={() => router.back()} style={styles.link}>
-    <Ionicons name="arrow-back-outline" size={24} color="black" />
-  </TouchableOpacity>
-  <Text style={styles.title}>Fridge</Text>
-</View>
+        <TouchableOpacity onPress={() => router.back()} style={styles.link}>
+          <Ionicons name="arrow-back-outline" size={24} color="black" />
+        </TouchableOpacity>
+        <Text style={styles.title}>Fridge</Text>
+      </View>
 
       {/* Expired Section */}
       <View style={styles.section}>
@@ -30,7 +51,7 @@ export default function GroceryListScreen() {
         {categorizeGroceries("expired").length > 0 ? (
           <FlatList
             data={categorizeGroceries("expired")}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <View style={styles.groceryItem}>
                 <Text style={[styles.groceryText, styles.expiredText]}>
@@ -51,14 +72,14 @@ export default function GroceryListScreen() {
         {categorizeGroceries("expiring-soon").length > 0 ? (
           <FlatList
             data={categorizeGroceries("expiring-soon")}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <View style={styles.groceryItem}>
                 <Text style={styles.groceryText}>{item.name}</Text>
                 <Text style={styles.expirationSubtext}>
                   Expires in{" "}
                   {Math.ceil(
-                    (new Date(item.expiration).getTime() -
+                    (new Date(item.expiration_date).getTime() -
                       new Date().getTime()) /
                       (1000 * 60 * 60 * 24)
                   )}{" "}
@@ -75,15 +96,15 @@ export default function GroceryListScreen() {
       {/* All Items Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>All Items</Text>
-        {GROCERIES.length > 0 ? (
+        {groceries.length > 0 ? (
           <FlatList
-            data={GROCERIES}
-            keyExtractor={(item, index) => index.toString()}
+            data={groceries}
+            keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <View style={styles.groceryItem}>
                 <Text style={styles.groceryText}>{item.name}</Text>
                 <Text style={styles.expirationSubtext}>
-                  {new Date(item.expiration).toLocaleDateString()}
+                  {new Date(item.expiration_date).toLocaleDateString()}
                 </Text>
               </View>
             )}
