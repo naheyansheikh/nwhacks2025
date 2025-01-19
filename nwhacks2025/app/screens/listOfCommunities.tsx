@@ -19,7 +19,7 @@ export default function Index() {
         <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back-outline" size={24} color="black" />
         </TouchableOpacity>
-        <Text style={styles.title}>Spaces</Text>
+        <Text style={styles.title}>People in your community</Text>
         <TouchableOpacity>
           <Ionicons name="add" size={24} color="black" />
         </TouchableOpacity>
@@ -34,7 +34,7 @@ export default function Index() {
 
       {/* Fridge Section */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Fridge</Text>
+        <Text style={styles.sectionTitle}>Friend</Text>
         <TouchableOpacity>
           <Ionicons name="chevron-forward" size={20} color="black" />
         </TouchableOpacity>
