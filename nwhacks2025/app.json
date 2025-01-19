@@ -10,7 +10,12 @@
     "entryPoint": "./node_modules/expo-router/loginScreen",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourapp.identifier",
+      "infoPlist": {
+        "UIBackgroundModes": ["fetch", "remote-notification"],
+        "NSUserTrackingUsageDescription": "This app uses notifications to alert you about food expiration."
+      }
     },
     "android": {
       "adaptiveIcon": {
