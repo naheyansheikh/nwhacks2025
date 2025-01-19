@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Text, View, StyleSheet, FlatList } from "react-native";
+import { Text, View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { router } from "expo-router";
 
 // Sample grocery data
 const GROCERIES = [
@@ -18,11 +18,11 @@ export default function GroceryListScreen() {
     <View style={styles.container}>
       {/* Top Bar */}
       <View style={styles.topBar}>
-        <Link href="/screens/spacesScreen" style={styles.link}>
-          <Ionicons name="arrow-back-outline" size={24} color="black" />
-        </Link>
-        <Text style={styles.title}>Fridge</Text>
-      </View>
+  <TouchableOpacity onPress={() => router.back()} style={styles.link}>
+    <Ionicons name="arrow-back-outline" size={24} color="black" />
+  </TouchableOpacity>
+  <Text style={styles.title}>Fridge</Text>
+</View>
 
       {/* Expired Section */}
       <View style={styles.section}>

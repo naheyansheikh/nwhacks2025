@@ -7,19 +7,9 @@ import {
   TouchableOpacity 
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { router } from "expo-router";
 
-// Define the types for navigation props
-type RootStackParamList = {
-  Communities: undefined;
-  Login: undefined;
-  Spaces: undefined;
-  AddFoodItem: undefined;
-};
-
-type Props = NativeStackScreenProps<RootStackParamList, "AddFoodItem">;
-
-export default function AddFoodItemScreen({ navigation }: Props) {
+export default function AddFoodItemScreen() {
   const [foodName, setFoodName] = useState<string>("");
   const [expirationDate, setExpirationDate] = useState<string>("");
 
@@ -27,7 +17,7 @@ export default function AddFoodItemScreen({ navigation }: Props) {
     <View style={styles.container}>
       {/* Top Bar */}
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+      <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back-outline" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.title}>Add Food Item</Text>

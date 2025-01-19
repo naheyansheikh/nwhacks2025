@@ -41,6 +41,13 @@ export default function Index() {
           </Link>
         </View>
 
+        <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Join Community</Text>
+          <Link href="/screens/joinCommunity" style={styles.link}>
+            <Ionicons name="chevron-forward" size={20} color="black" />
+          </Link>
+        </View>
+
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navItem}>
