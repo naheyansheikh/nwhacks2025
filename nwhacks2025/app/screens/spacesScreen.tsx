@@ -8,9 +8,9 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons"; // Install expo-icons if not already installed
 import { useRouter } from "expo-router"; // For navigation
-import { Link } from "expo-router";
 import * as Notifications from "expo-notifications";
 import { supabase } from "../../services/supabaseClient";
+import { Link, router } from "expo-router";
 
 const fetchFoodItemsFromDatabase = async () => {
   const { data, error } = await supabase
@@ -87,12 +87,14 @@ export default function Index() {
   return (
     <View style={styles.container}>
       {/* Top Bar */}
+      <Link href="/screens/enterNewItemOptions" asChild>
       <View style={styles.topBar}>
         <Text style={styles.title}>Spaces</Text>
         <TouchableOpacity>
           <Ionicons name="add" size={24} color="black" />
         </TouchableOpacity>
       </View>
+      </Link>
 
       {/* Search Bar */}
       <TextInput
