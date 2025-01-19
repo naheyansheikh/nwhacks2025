@@ -6,9 +6,10 @@ import { launchImageLibrary } from 'react-native-image-picker';  // Import Image
 import Tesseract from 'tesseract.js';  // Import Tesseract.js for OCR
 import { GEMINI_API_KEY } from '../env';
 
+// TODO: make photo selecter compatible with ios simulator
 export default function FoodItemInput() {
   const [imageUri, setImageUri] = useState<string>('');
-  const [extractedText, setExtractedText] = useState<string>('');
+  const [groceryLog, setGroceryLog] = useState<string>('');
   const [userId, setUserId] = useState<string>("");
 
   useEffect(() => {
@@ -37,7 +38,7 @@ export default function FoodItemInput() {
   };
 
   const readGroceriesFromReceipt = async (receiptText: string) => {
-    const prompt = `give me a list of all food items in raw JSON format with no \`\`\` surrounding it, with each with fields name, 
+    const prompt = `give me a list of all food items in ${receiptText} in raw JSON format with no \`\`\` surrounding it, with each with fields name, 
       expiration_date.  expiration_date should be a YYYY-MM-DD formatted string that you estimate it would be from today (2025-01-19)`;
 
     try {
@@ -54,6 +55,8 @@ export default function FoodItemInput() {
       // formats chatgpt text so that database is happy
       const responseText = response.data["candidates"][0]["content"]["parts"][0]["text"];
       const groceriesJSON = JSON.parse(responseText);
+
+      let groceryLog = "";
       groceriesJSON.forEach(async (g) => {
         g["status"] = calculateStatus(g["expiration_date"]);
         g["user_id"] = userId;
@@ -68,8 +71,12 @@ export default function FoodItemInput() {
           console.error('Insert error:', error);
           throw error;
         }
-      });
 
+        groceryLog += `Added ${g["name"]} (expires on ${g["expiration_date"]})\n`;
+      });
+      
+      console.log(groceryLog);
+      setGroceryLog(groceryLog);
     } catch (error) {
       console.error('Error unable to read Groceries:', error);
     }
@@ -96,12 +103,10 @@ export default function FoodItemInput() {
       .then((result) => {
         const text = result.data.text;
         console.log('Extracted Text: ', text);
-        setExtractedText(text); 
         readGroceriesFromReceipt(text);   
       })
       .catch((err) => {
         console.error('OCR Error: ', err);
-        setExtractedText('Failed to extract text');
       });
   };
 
@@ -109,10 +114,10 @@ export default function FoodItemInput() {
     <View style={styles.container}>
       <Button title="Select Receipt" onPress={handleImagePick} />
       {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
-      {extractedText ? (
+      {groceryLog ? (
         <View style={styles.textContainer}>
-          <Text style={styles.extractedText}>Extracted Text: </Text>
-          <Text>{extractedText}</Text>
+          <Text style={styles.extractedText}>Added:  </Text>
+          <Text>{groceryLog}</Text>
         </View>
       ) : null}
     </View>
