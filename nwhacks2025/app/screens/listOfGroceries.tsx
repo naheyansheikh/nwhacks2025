@@ -24,11 +24,26 @@ export default function HouseFamFridgeScreen() {
 
   const fetchGroceries = async () => {
     try {
+      const userResponse = await supabase.auth.getUser();
+      console.log("User Response:", userResponse);
+      const userId = userResponse.data?.user?.id;
+
+      if (!userId) {
+        console.error("User ID is undefined. User may not be logged in.");
+        return;
+      }
+
       const { data, error } = await supabase
         .from("groceries")
         .select("*")
+        .eq("user_id", userId)
         .order("expiration_date", { ascending: true });
-      if (error) throw error;
+
+      if (error) {
+        console.error("Error fetching groceries:", error);
+        throw error;
+      }
+
       setGroceries(data || []);
     } catch (error) {
       console.error("Error fetching groceries:", error);
