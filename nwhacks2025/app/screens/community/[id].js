@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { supabase } from "../../../services/supabaseClient";
 
@@ -83,49 +84,81 @@ export default function CommunityDetails() {
   if (error) return <Text>{error}</Text>;
 
   return (
-    <ScrollView style={styles.container}>
-      <View>
-        <Text style={styles.title}>{community?.name}</Text>
-        <Text style={styles.info}>Code: {community?.code}</Text>
-        {/* <Text style={styles.info}>
-          Created At: {new Date(community?.created_at).toLocaleString()}
-        </Text> */}
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollContainer}>
+        <View>
+          <Text style={styles.title}>{community?.name}</Text>
+          <Text style={styles.info}>Code: {community?.code}</Text>
 
-        <Text style={styles.subtitle}>Community Members</Text>
-        {members.length > 0 ? (
-          members.map((member) => (
-            <View key={member.user_id} style={styles.memberSection}>
-              <Text style={styles.memberHeader}>Member ID: {member.user_id}</Text>
-              {soonToExpireFoods[member.user_id] &&
-              soonToExpireFoods[member.user_id].length > 0 ? (
-                soonToExpireFoods[member.user_id].map((food) => (
-                  <View key={food.id} style={styles.foodItem}>
-                    <Text style={styles.foodName}>Food: {food.name}</Text>
-                    <Text style={styles.foodExpiration}>
-                      Expiration Date:{" "}
-                      {new Date(food.expiration_date).toLocaleDateString()}
-                    </Text>
-                  </View>
-                ))
-              ) : (
-                <Text style={styles.noFoodsText}>No soon-to-expire foods.</Text>
-              )}
-            </View>
-          ))
-        ) : (
-          <Text style={styles.noMembersText}>
-            No members in this community yet.
-          </Text>
-        )}
+          <Text style={styles.subtitle}>Community Members</Text>
+          {members.length > 0 ? (
+            members.map((member) => (
+              <View key={member.user_id} style={styles.memberSection}>
+                <Text style={styles.memberHeader}>Member ID: {member.user_id}</Text>
+                {soonToExpireFoods[member.user_id] &&
+                soonToExpireFoods[member.user_id].length > 0 ? (
+                  soonToExpireFoods[member.user_id].map((food) => (
+                    <View key={food.id} style={styles.foodItem}>
+                      <Text style={styles.foodName}>Food: {food.name}</Text>
+                      <Text style={styles.foodExpiration}>
+                        Expiration Date:{" "}
+                        {new Date(food.expiration_date).toLocaleDateString()}
+                      </Text>
+                    </View>
+                  ))
+                ) : (
+                  <Text style={styles.noFoodsText}>No soon-to-expire foods.</Text>
+                )}
+              </View>
+            ))
+          ) : (
+            <Text style={styles.noMembersText}>
+              No members in this community yet.
+            </Text>
+          )}
+        </View>
+      </ScrollView>
+
+      {/* Bottom Navigation */}
+      <View style={styles.bottomNav}>
+        <TouchableOpacity style={styles.navItem}>
+          <Ionicons name="basket-outline" size={24} color="black" />
+          <Text style={styles.navText}>Items</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => router.push("/screens/recipeGeneration")}
+        >
+          <Ionicons name="restaurant-outline" size={24} color="black" />
+          <Text style={styles.navText}>Recipes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => router.push("/screens/joinCommunity")}
+        >
+          <Ionicons name="people-outline" size={24} color="black" />
+          <Text style={styles.navText}>Communities</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => router.push("/screens/settings")}
+        >
+          <Ionicons name="settings-outline" size={24} color="black" />
+          <Text style={styles.navText}>Settings</Text>
+        </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: "#B0C4DE",
+  },
+  scrollContainer: {
+    flex: 1,
     padding: 16,
-    backgroundColor: "#B0C4DE", // Match the pastel blue theme
   },
   title: {
     fontSize: 28,
@@ -136,21 +169,21 @@ const styles = StyleSheet.create({
   },
   info: {
     fontSize: 16,
-    color: "#6D8299", // Subtle gray text
+    color: "#6D8299",
     marginBottom: 8,
     textAlign: "center",
   },
   subtitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#4B5563", // Dark gray for section headers
+    color: "#4B5563",
     marginBottom: 16,
     textAlign: "center",
   },
   memberSection: {
     marginBottom: 16,
     padding: 16,
-    backgroundColor: "#D9E6F2", // Light pastel blue for member sections
+    backgroundColor: "#D9E6F2",
     borderRadius: 8,
   },
   memberHeader: {
@@ -161,7 +194,7 @@ const styles = StyleSheet.create({
   },
   foodItem: {
     padding: 12,
-    backgroundColor: "#E8F0F8", // Lighter blue for food items
+    backgroundColor: "#E8F0F8",
     borderRadius: 8,
     marginBottom: 8,
   },
@@ -182,5 +215,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#6D8299",
     textAlign: "center",
+  },
+  bottomNav: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    backgroundColor: "#D9E6F2",
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: "#A2B9CE",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+  navItem: {
+    alignItems: "center",
+  },
+  navText: {
+    fontSize: 12,
+    color: "black",
+    marginTop: 4,
   },
 });
