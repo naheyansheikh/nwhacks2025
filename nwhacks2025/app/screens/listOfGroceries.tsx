@@ -95,7 +95,7 @@ export default function HouseFamFridgeScreen() {
   return (
     <View style={styles.container}>
       {/* Top Bar */}
-      <View style={styles.topBar}>
+      {/* <View style={styles.topBar}>
         <TouchableOpacity
           onPress={() => router.back()}
           style={styles.touchableArea}
@@ -103,7 +103,7 @@ export default function HouseFamFridgeScreen() {
           <Ionicons name="arrow-back-outline" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.title}>Fridge</Text>
-      </View>
+      </View> */}
 
       {/* Food Categories */}
       <ScrollView style={styles.scrollContainer}>

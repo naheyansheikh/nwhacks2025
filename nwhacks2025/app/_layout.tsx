@@ -42,7 +42,7 @@ export default function RootLayout() {
       <Stack.Screen
         name="screens/recipeGeneration"
         options={{
-          headerTitle: "Generate Recipes", // Your communities
+          headerTitle: "Recipes", // Your communities
         }}
       />
       <Stack.Screen
