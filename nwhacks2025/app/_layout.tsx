@@ -57,6 +57,12 @@ export default function RootLayout() {
           headerTitle: "Input Food Items", // Your communities
         }}
       />
+      <Stack.Screen
+        name="screens/faq"
+        options={{
+          headerTitle: "FAQ", // FAQ
+        }}
+      />
     </Stack>
 
   );

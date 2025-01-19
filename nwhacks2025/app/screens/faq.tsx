@@ -7,12 +7,12 @@ export default function FAQScreen() {
   return (
     <View style={styles.container}>
       {/* Top Bar */}
-      <View style={styles.topBar}>
+      {/* <View style={styles.topBar}>
         <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back-outline" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.title}>FAQ</Text>
-      </View>
+      </View> */}
 
       {/* FAQ Container */}
       <View style={styles.faqContainer}>
