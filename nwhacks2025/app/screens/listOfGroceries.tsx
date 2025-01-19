@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, FlatList, TouchableOpacity, Button } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
 import { supabase } from "../../services/supabaseClient";
+import axios from 'axios';
+import Config from 'react-native-config';
 
 type GroceryItem = {
   id: number;
@@ -11,8 +13,39 @@ type GroceryItem = {
   status: string;
 };
 
+const GEMINI_API_KEY = "CHANGE_THIS"
+
 export default function GroceryListScreen() {
   const [groceries, setGroceries] = useState<GroceryItem[]>([]);
+  const [recipe, setRecipe] = useState('');
+
+  const generateRecipe = async () => {
+    const prompt = `Create a recipe using the following ingredients: ${groceries.map((a) => a.name).join(', ')} only list ingredients and steps and keep in concise`;
+    try {
+      const response = await axios.post(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+        contents: [{
+          parts: [{ text: prompt }]
+        }]
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const recipe = response.data["candidates"][0]["content"]["parts"][0]["text"];
+      setRecipe(recipe); // Set the generated recipe
+    } catch (error) {
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        console.error('Error response status:', error.response.status);
+        console.error('Error response headers:', error.response.headers);
+      } else if (error.request) {
+        console.error('Error request:', error.request);
+      } else {
+        console.error('Error message:', error.message);
+      }
+      console.error('Error config:', error.config);
+    }
+  };
 
   useEffect(() => {
     fetchGroceries();
@@ -24,7 +57,6 @@ export default function GroceryListScreen() {
         .from('groceries')
         .select('*')
         .order('expiration_date', { ascending: true });
-
       if (error) throw error;
       setGroceries(data || []);
     } catch (error) {
@@ -121,6 +153,10 @@ export default function GroceryListScreen() {
       >
         <Text style={styles.addButtonText}>Add Food Entry</Text>
       </TouchableOpacity>
+
+      <Button title="Generate Recipe" onPress={generateRecipe} />
+      <Text style={{ marginTop: 20, fontWeight: 'bold' }}>Generated Recipe:</Text>
+      <Text style={{ marginTop: 10 }}>{recipe}</Text>
     </View>
   );
 }
