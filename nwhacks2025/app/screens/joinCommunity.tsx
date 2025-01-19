@@ -37,7 +37,6 @@ export default function CommunitiesScreen() {
     const handleJoinCommunity = async () => {
         setMessage(''); // Reset message
         if (!joinCode) {
-            setMessage('Please enter a join code to join a community.');
             return;
         }
 
@@ -52,7 +51,6 @@ export default function CommunitiesScreen() {
 
         if (fetchError && fetchError.code !== 'PGRST116') { // Handle specific error for no rows found
             console.error('Error fetching community:', fetchError);
-            setMessage('Error checking community code.');
             setLoading(false);
             return;
         }
@@ -68,7 +66,6 @@ export default function CommunitiesScreen() {
 
             if (membershipError) {
                 console.error('Error checking membership:', membershipError);
-                setMessage('Error checking membership.');
                 setLoading(false);
                 return;
             }
@@ -76,7 +73,6 @@ export default function CommunitiesScreen() {
             // Check if the user is already a member
             if (existingMembership.length > 0) {
                 // Redirect to the community page if already a member
-                setMessage('You are already a member of this community. Redirecting...');
                 router.push(`/screens/community/${existingCommunity.id}`); // Redirect to the community page
             } else {
                 // If the user is not a member, insert a new membership record
@@ -86,15 +82,12 @@ export default function CommunitiesScreen() {
 
                 if (joinError) {
                     console.error('Error joining community:', joinError);
-                    setMessage('Error joining community.');
                 } else {
-                    setMessage('Successfully joined the community!');
                     // Redirect to the community page
                     router.push(`/screens/community/${existingCommunity.id}`);
                 }
             }
         } else {
-            setMessage('Community not found. Please check the code.');
         }
 
         setLoading(false); // Reset loading state
@@ -103,7 +96,6 @@ export default function CommunitiesScreen() {
     const handleCreateCommunity = async () => {
         setMessage(''); // Reset message
         if (!createCode || !communityName) {
-            setMessage('Please enter a code and a name for the new community.');
             return;
         }
 
@@ -117,7 +109,6 @@ export default function CommunitiesScreen() {
             .single();
 
         if (existingCommunity) {
-            setMessage('Community with this code already exists. Please choose a different code.');
             setLoading(false);
             return;
         }
@@ -129,12 +120,9 @@ export default function CommunitiesScreen() {
 
         if (createError) {
             console.error('Error creating community:', createError);
-            setMessage('Error creating community: ' + createError.message);
             setLoading(false);
             return;
         }
-
-        setMessage('New community created successfully! You can now join.');
 
         // Fetch the newly created community ID
         const { data: newCommunity } = await supabase
@@ -151,7 +139,6 @@ export default function CommunitiesScreen() {
 
         if (joinError) {
             console.error('Error adding user to community:', joinError);
-            setMessage('Error adding you to the community.');
         } else {
             // Redirect to the newly created community page
             router.push(`/screens/community/${newCommunity.id}`); // Adjust the route as needed
