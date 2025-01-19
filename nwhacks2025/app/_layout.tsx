@@ -10,17 +10,60 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
-        name="spacesScreen"
+        name="screens/spacesScreen"
         options={{
-          headerTitle: "Spaces", // Custom header for spaces screen
+          headerTitle: "Spaces", // Custom header for spaces
         }}
       />
       <Stack.Screen
-        name="signupScreen"
+        name="screens/signupScreen"
         options={{
-          headerTitle: "Sign Up", // Custom header for signup screen
+          headerTitle: "Sign Up", // Custom header for sign up
+        }}
+      />
+      <Stack.Screen
+        name="screens/settings"
+        options={{
+          headerTitle: "Settings", // Custom header for settings screen
+        }}
+      />
+      <Stack.Screen
+        name="screens/joinCommunity"
+        options={{
+          headerTitle: "Join Community", // Custom header for joining communities screen
+        }}
+      />
+      <Stack.Screen
+        name="screens/listOfCommunities"
+        options={{
+          headerTitle: "Your Communities", // Your communities
+        }}
+      />
+      <Stack.Screen
+        name="screens/recipeGeneration"
+        options={{
+          headerTitle: "Recipes", // Your communities
+        }}
+      />
+      <Stack.Screen
+        name="screens/listOfGroceries"
+        options={{
+          headerTitle: "Food Items", // Your communities
+        }}
+      />
+      <Stack.Screen
+        name="screens/foodEntry"
+        options={{
+          headerTitle: "Input Food Items", // Your communities
+        }}
+      />
+      <Stack.Screen
+        name="screens/faq"
+        options={{
+          headerTitle: "FAQ", // FAQ
         }}
       />
     </Stack>
+
   );
 }

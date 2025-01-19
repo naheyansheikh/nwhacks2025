@@ -25,7 +25,7 @@ export default function LoginScreen() {
 
       // Navigate to Spaces screen after successful login
       Alert.alert("Success", "Logged in successfully!");
-      router.push("/screens/spacesScreen");
+      router.push("/screens/listOfGroceries");
     } catch (error: any) {
       Alert.alert("Login Failed", error.message || "Unknown error occurred.");
     }
