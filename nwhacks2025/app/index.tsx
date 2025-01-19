@@ -8,26 +8,26 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { supabase } from "../../services/supabaseClient"; 
+import { supabase } from "../services/supabaseClient"; // Ensure the path is correct
 
-export default function LoginScreen({}) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function LoginScreen() {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   const handleLogin = async () => {
     try {
-      const { user, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) throw error;
 
-      // Navigate to the main screen after successful login
+      // Navigate to Spaces screen after successful login
       Alert.alert("Success", "Logged in successfully!");
       router.push("/screens/spacesScreen");
-    } catch (error) {
-      Alert.alert("Login Failed", error.message);
+    } catch (error: any) {
+      Alert.alert("Login Failed", error.message || "Unknown error occurred.");
     }
   };
 
@@ -54,7 +54,7 @@ export default function LoginScreen({}) {
         placeholderTextColor="#6D8299"
         value={password}
         onChangeText={(text) => setPassword(text)}
-        secureTextEntry={true}
+        secureTextEntry
         autoCapitalize="none"
       />
 
@@ -79,49 +79,49 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#B0C4DE", // Dim pastel blue background
+    backgroundColor: "#B0C4DE",
     padding: 16,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "black", // Black text for contrast
+    color: "black",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: "#6D8299", // Soft gray text
+    color: "#6D8299",
     marginBottom: 24,
   },
   input: {
     width: "90%",
-    backgroundColor: "#D9E6F2", // Lighter pastel blue input field
+    backgroundColor: "#D9E6F2",
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
-    color: "black", // Black text for visibility
+    color: "black",
     fontSize: 16,
   },
   loginButton: {
     width: "90%",
-    backgroundColor: "#6D8299", // Soft gray button
+    backgroundColor: "#6D8299",
     padding: 12,
     borderRadius: 8,
     alignItems: "center",
     marginTop: 16,
   },
   loginButtonText: {
-    color: "white", // White text for contrast
+    color: "white",
     fontSize: 16,
     fontWeight: "bold",
   },
   signupText: {
     marginTop: 16,
-    color: "#6D8299", // Soft gray text
+    color: "#6D8299",
     fontSize: 14,
   },
   signupLink: {
-    color: "black", // Black for clickable text
+    color: "black",
     fontWeight: "bold",
   },
 });

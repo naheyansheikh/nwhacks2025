@@ -7,7 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "entryPoint": "./node_modules/expo-router/entry",
+    "entryPoint": "./node_modules/expo-router/loginScreen",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true

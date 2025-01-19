@@ -17,9 +17,6 @@ export default function Index() {
     <View style={styles.container}>
       {/* Top Bar */}
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back-outline" size={24} color="black" />
-        </TouchableOpacity>
         <Text style={styles.title}>Spaces</Text>
         <TouchableOpacity>
           <Ionicons name="add" size={24} color="black" />
@@ -82,6 +79,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "black", // Black text for contrast
     fontWeight: "bold",
+    alignItems: "center",
   },
   searchBar: {
     backgroundColor: "#D9E6F2", // Lighter pastel blue for input field

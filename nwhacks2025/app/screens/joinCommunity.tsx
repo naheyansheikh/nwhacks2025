@@ -23,7 +23,12 @@ export default function CommunitiesScreen() {
         >
           <Ionicons name="arrow-back-outline" size={24} color="black" />
         </TouchableOpacity>
+
+        {/* Empty View for Centering */}
         <Text style={styles.title}>Communities</Text>
+
+        {/* Empty View for Alignment */}
+        <View style={{ flex: 1 }} />
       </View>
 
       {/* Join Code Bar */}
@@ -52,6 +57,7 @@ const styles = StyleSheet.create({
   topBar: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between", // Distributes items evenly
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
@@ -62,7 +68,7 @@ const styles = StyleSheet.create({
     color: "black",
     fontWeight: "bold",
     textAlign: "center",
-    flex: 1, // Flex alignment for centering
+    flex: 1, // Ensures the title is centered
   },
   joinCodeContainer: {
     flex: 1,
