@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Text, View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 
 // Sample grocery data
 const GROCERIES = [
@@ -92,6 +92,14 @@ export default function GroceryListScreen() {
           <Text style={styles.noItemsText}>No items available</Text>
         )}
       </View>
+
+      {/* Add Food Entry Button */}
+      <TouchableOpacity 
+        style={styles.addButton}
+        onPress={() => router.push("/screens/foodEntry")}
+      >
+        <Text style={styles.addButtonText}>Add Food Entry</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -155,5 +163,20 @@ const styles = StyleSheet.create({
   },
   link: {
     paddingHorizontal: 8,
+  },
+  addButton: {
+    backgroundColor: '#6D8299',
+    padding: 16,
+    borderRadius: 8,
+    position: 'absolute',
+    bottom: 20,
+    left: 16,
+    right: 16,
+    alignItems: 'center',
+  },
+  addButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

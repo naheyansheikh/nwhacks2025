@@ -17,7 +17,17 @@ export default function AddFoodItemScreen() {
     <View style={styles.container}>
       {/* Top Bar */}
       <View style={styles.topBar}>
-      <TouchableOpacity onPress={() => router.back()}>
+      <TouchableOpacity
+          onPress={() => {
+            console.log("Back button pressed");
+            if (router.canGoBack()) {
+              router.back();
+            } else {
+              router.push("/screens/spacesScreen");
+            }
+          }}
+          style={styles.touchableArea}
+        >
           <Ionicons name="arrow-back-outline" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.title}>Add Food Item</Text>
@@ -59,21 +69,17 @@ const styles = StyleSheet.create({
   topBar: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between", // Keeps back button aligned to the left
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#A2B9CE", // Slightly darker pastel blue divider
-    position: "relative", // Enables absolute positioning for the title
+    borderBottomColor: "#A2B9CE",
   },
   title: {
     fontSize: 18,
-    color: "black", // Black text for contrast
+    color: "black",
     fontWeight: "bold",
-    position: "absolute", // Centers the title
-    left: 0,
-    right: 0,
     textAlign: "center",
+    flex: 1, // Flex alignment for centering
   },
   inputContainer: {
     flex: 1,
@@ -106,5 +112,8 @@ const styles = StyleSheet.create({
     color: "white", // White text for contrast
     fontSize: 16,
     fontWeight: "bold",
+  },
+  touchableArea: {
+    padding: 12, // Larger touchable area
   },
 });

@@ -41,13 +41,6 @@ export default function Index() {
           </Link>
         </View>
 
-        <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Join Community</Text>
-          <Link href="/screens/joinCommunity" style={styles.link}>
-            <Ionicons name="chevron-forward" size={20} color="black" />
-          </Link>
-        </View>
-
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navItem}>
@@ -58,7 +51,7 @@ export default function Index() {
           <Ionicons name="restaurant-outline" size={24} color="black" />
           <Text style={styles.navText}>Recipes</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => router.push("/screens/joinCommunity")}>
           <Ionicons name="people-outline" size={24} color="black" />
           <Text style={styles.navText}>Communities</Text>
         </TouchableOpacity>
