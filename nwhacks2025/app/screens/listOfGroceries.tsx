@@ -13,7 +13,7 @@ type GroceryItem = {
   status: string;
 };
 
-const GEMINI_API_KEY = "CHANGE_THIS"
+const GEMINI_API_KEY = "CHANGE THIS"
 
 export default function GroceryListScreen() {
   const [groceries, setGroceries] = useState<GroceryItem[]>([]);
