@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Text,
   View,
@@ -9,9 +9,80 @@ import {
 import { Ionicons } from "@expo/vector-icons"; // Install expo-icons if not already installed
 import { useRouter } from "expo-router"; // For navigation
 import { Link } from "expo-router";
+import * as Notifications from "expo-notifications";
+import { supabase } from "../../services/supabaseClient";
+
+const fetchFoodItemsFromDatabase = async () => {
+  const { data, error } = await supabase
+    .from("groceries")
+    .select("name, expiration_date");
+
+  if (error) {
+    console.error("Error fetching food items:", error);
+    return [];
+  }
+
+  console.log("Fetched food items:", data); // Log for debugging
+  return data.map((item) => ({
+    name: item.name,
+    expirationDate: new Date(item.expiration_date),
+  }));
+};
 
 export default function Index() {
   const router = useRouter(); // Router hook for navigation
+
+  useEffect(() => {
+    // Request notification permissions
+    const requestPermissions = async () => {
+      const { status } = await Notifications.getPermissionsAsync();
+      if (status !== "granted") {
+        const { status: newStatus } = await Notifications.requestPermissionsAsync();
+        if (newStatus !== "granted") {
+          alert("You need to enable notifications to receive alerts about food expiration.");
+        }
+      }
+    };
+
+    const scheduleNotification = async (item, message) => {
+      console.log(`Scheduling notification for: ${item.name}`);
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Food Expiration Alert",
+          body: message,
+        },
+        trigger: { seconds: 5, repeats: false },
+      });
+    };
+
+    const checkExpiredFoods = async () => {
+      const foodItems = await fetchFoodItemsFromDatabase();
+      console.log("Checking expired foods...");
+
+      foodItems.forEach(async (item) => {
+        if (item.expirationDate < new Date()) {
+          await scheduleNotification(item, `${item.name} has expired!`);
+        } else if (
+          item.expirationDate <= new Date(Date.now() + 1000 * 60 * 60 * 24 * 3)
+        ) {
+          await scheduleNotification(item, `${item.name} will expire soon!`);
+        }
+      });
+    };
+
+    // Handle notifications received while the app is in the foreground
+    const subscription = Notifications.addNotificationReceivedListener((notification) => {
+      console.log("Notification received:", notification);
+      alert(notification.request.content.body); // Show an alert for debugging
+    });
+
+    // Run notification setup when the screen loads
+    requestPermissions();
+    checkExpiredFoods();
+
+    // Clean up the listener on component unmount
+    return () => subscription.remove();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -33,10 +104,10 @@ export default function Index() {
       {/* Fridge Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Fridge</Text>
-          <Link href="/screens/listOfGroceries" style={styles.link}>
-            <Ionicons name="chevron-forward" size={20} color="black" />
-          </Link>
-        </View>
+        <Link href="/screens/listOfGroceries" style={styles.link}>
+          <Ionicons name="chevron-forward" size={20} color="black" />
+        </Link>
+      </View>
 
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
@@ -48,7 +119,10 @@ export default function Index() {
           <Ionicons name="restaurant-outline" size={24} color="black" />
           <Text style={styles.navText}>Recipes</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => router.push("/screens/joinCommunity")}>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => router.push("/screens/joinCommunity")}
+        >
           <Ionicons name="people-outline" size={24} color="black" />
           <Text style={styles.navText}>Communities</Text>
         </TouchableOpacity>

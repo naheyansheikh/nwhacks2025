@@ -48,7 +48,8 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
-    "tesseract.js": "^6.0.0"
+    "tesseract.js": "^6.0.0",
+    "expo-notifications": "~0.29.12"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
