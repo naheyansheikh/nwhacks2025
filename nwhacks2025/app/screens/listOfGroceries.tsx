@@ -1,19 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, FlatList, TouchableOpacity, Button } from "react-native";
+import React, { useState, useEffect } from "react";
+import { 
+  Text, 
+  View, 
+  StyleSheet, 
+  TouchableOpacity, 
+  ScrollView 
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { supabase } from "../../services/supabaseClient";
 
-type GroceryItem = {
-  id: number;
-  name: string;
-  expiration_date: string;
-  status: string;
-};
-
-export default function GroceryListScreen() {
-  const [groceries, setGroceries] = useState<GroceryItem[]>([]);
-  const [recipe, setRecipe] = useState('');
+export default function HouseFamFridgeScreen() {
+  const [categoryExpanded, setCategoryExpanded] = useState({
+    all: true,
+    'expiring-soon': true,
+    expired: true,
+  });
+  const [groceries, setGroceries] = useState([]);
 
   useEffect(() => {
     fetchGroceries();
@@ -22,97 +25,137 @@ export default function GroceryListScreen() {
   const fetchGroceries = async () => {
     try {
       const { data, error } = await supabase
-        .from('groceries')
-        .select('*')
-        .order('expiration_date', { ascending: true });
+        .from("groceries")
+        .select("*")
+        .order("expiration_date", { ascending: true });
       if (error) throw error;
       setGroceries(data || []);
     } catch (error) {
-      console.error('Error fetching groceries:', error);
+      console.error("Error fetching groceries:", error);
     }
   };
 
-  const categorizeGroceries = (status: string) =>
-    groceries.filter((item) => item.status === status);
+  const categorizeGroceries = () => {
+    const now = new Date();
+    return groceries.reduce(
+      (categories, item) => {
+        const daysUntil =
+          Math.ceil(
+            (new Date(item.expiration_date).getTime() - now.getTime()) /
+              (1000 * 60 * 60 * 24)
+          );
+        if (daysUntil < 0) {
+          categories.expired.push({ ...item, daysUntil });
+        } else if (daysUntil <= 7) {
+          categories["expiring-soon"].push({ ...item, daysUntil });
+        } else {
+          categories.all.push({ ...item, daysUntil });
+        }
+        return categories;
+      },
+      { all: [], "expiring-soon": [], expired: [] }
+    );
+  };
+
+  const toggleCategory = (category) => {
+    setCategoryExpanded((prev) => ({
+      ...prev,
+      [category]: !prev[category],
+    }));
+  };
+
+  const getCategoryTitle = (category) => {
+    switch (category) {
+      case "all":
+        return "Fresh Items";
+      case "expiring-soon":
+        return "Expiring Soon";
+      case "expired":
+        return "Expired";
+      default:
+        return category;
+    }
+  };
+
+  const getCategoryColor = (category) => {
+    switch (category) {
+      case "all":
+        return "#4CAF50";
+      case "expiring-soon":
+        return "#FFD93D";
+      case "expired":
+        return "#FF6B6B";
+      default:
+        return "black";
+    }
+  };
+
+  const categorizedGroceries = categorizeGroceries();
 
   return (
     <View style={styles.container}>
       {/* Top Bar */}
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.link}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.touchableArea}
+        >
           <Ionicons name="arrow-back-outline" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.title}>Fridge</Text>
       </View>
 
-      {/* Expired Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Expired</Text>
-        {categorizeGroceries("expired").length > 0 ? (
-          <FlatList
-            data={categorizeGroceries("expired")}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <View style={styles.groceryItem}>
-                <Text style={[styles.groceryText, styles.expiredText]}>
-                  {item.name}
-                </Text>
-                <Text style={styles.expiredSubtext}>Expired!</Text>
-              </View>
-            )}
-          />
-        ) : (
-          <Text style={styles.noItemsText}>No expired items</Text>
-        )}
-      </View>
+      {/* Food Categories */}
+      <ScrollView style={styles.scrollContainer}>
+        {Object.keys(categorizedGroceries).map((category) => (
+          <View key={category}>
+            <TouchableOpacity
+              style={styles.categoryHeader}
+              onPress={() => toggleCategory(category)}
+            >
+              <Text
+                style={[
+                  styles.categoryTitle,
+                  { color: getCategoryColor(category) },
+                ]}
+              >
+                {getCategoryTitle(category)} (
+                {categorizedGroceries[category].length})
+              </Text>
+              <Ionicons
+                name={
+                  categoryExpanded[category]
+                    ? "chevron-down"
+                    : "chevron-forward"
+                }
+                size={20}
+                color={getCategoryColor(category)}
+              />
+            </TouchableOpacity>
 
-      {/* Expiring Soon Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Expiring Soon</Text>
-        {categorizeGroceries("expiring-soon").length > 0 ? (
-          <FlatList
-            data={categorizeGroceries("expiring-soon")}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <View style={styles.groceryItem}>
-                <Text style={styles.groceryText}>{item.name}</Text>
-                <Text style={styles.expirationSubtext}>
-                  Expires in{" "}
-                  {Math.ceil(
-                    (new Date(item.expiration_date).getTime() -
-                      new Date().getTime()) /
-                      (1000 * 60 * 60 * 24)
-                  )}{" "}
-                  days
-                </Text>
-              </View>
-            )}
-          />
-        ) : (
-          <Text style={styles.noItemsText}>No items expiring soon</Text>
-        )}
-      </View>
-
-      {/* All Items Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>All Items</Text>
-        {groceries.length > 0 ? (
-          <FlatList
-            data={groceries}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <View style={styles.groceryItem}>
-                <Text style={styles.groceryText}>{item.name}</Text>
-                <Text style={styles.expirationSubtext}>
-                  {new Date(item.expiration_date).toLocaleDateString()}
-                </Text>
-              </View>
-            )}
-          />
-        ) : (
-          <Text style={styles.noItemsText}>No items available</Text>
-        )}
-      </View>
+            {categoryExpanded[category] &&
+              categorizedGroceries[category].map((item) => (
+                <View key={item.id} style={styles.foodItem}>
+                  <View style={styles.foodInfo}>
+                    <Text style={styles.foodName}>{item.name}</Text>
+                    <Text
+                      style={[
+                        styles.expirationText,
+                        { color: getCategoryColor(category) },
+                      ]}
+                    >
+                      {category === "expired"
+                        ? "Expired!"
+                        : category === "expiring-soon"
+                        ? `Expires in ${item.daysUntil} days`
+                        : `Fresh (${item.daysUntil} days left)`}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+          </View>
+        ))}
+      </ScrollView>
 
       {/* Add Food Entry Button */}
       <TouchableOpacity 
@@ -128,76 +171,76 @@ export default function GroceryListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#B0C4DE", // Dim pastel blue background
-    paddingHorizontal: 16,
+    backgroundColor: "#B0C4DE",
   },
   topBar: {
     flexDirection: "row",
     alignItems: "center",
+    paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: "#A2B9CE",
   },
   title: {
     fontSize: 18,
-    fontWeight: "bold",
     color: "black",
-    marginLeft: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+    flex: 1,
   },
-  section: {
-    marginVertical: 16,
+  scrollContainer: {
+    flex: 1,
+    padding: 16,
   },
-  sectionTitle: {
+  categoryHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: "#D9E6F2",
+    borderRadius: 8,
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  categoryTitle: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "black",
-    marginBottom: 8,
   },
-  groceryItem: {
-    backgroundColor: "#D9E6F2",
+  foodItem: {
+    backgroundColor: "#E8F0F8",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderBottomWidth: 1,
+    borderBottomColor: "#D9E6F2",
+  },
+  foodInfo: {
+    flex: 1,
+  },
+  foodName: {
+    fontSize: 16,
+    color: "black",
+    marginBottom: 4,
+  },
+  expirationText: {
+    fontSize: 14,
+  },
+  touchableArea: {
     padding: 12,
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  groceryText: {
-    fontSize: 14,
-    color: "black",
-    fontWeight: "bold",
-  },
-  expiredText: {
-    color: "red", // Red text for expired items
-  },
-  expirationSubtext: {
-    fontSize: 12,
-    color: "#6D8299", // Soft gray text
-    marginTop: 4,
-  },
-  expiredSubtext: {
-    fontSize: 12,
-    color: "red",
-    marginTop: 4,
-  },
-  noItemsText: {
-    fontSize: 14,
-    color: "#6D8299",
-    textAlign: "center",
-  },
-  link: {
-    paddingHorizontal: 8,
   },
   addButton: {
-    backgroundColor: '#6D8299',
+    backgroundColor: "#6D8299",
     padding: 16,
     borderRadius: 8,
-    position: 'absolute',
+    position: "absolute",
     bottom: 20,
     left: 16,
     right: 16,
-    alignItems: 'center',
+    alignItems: "center",
   },
   addButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
