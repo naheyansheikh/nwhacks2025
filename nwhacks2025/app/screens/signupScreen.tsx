@@ -8,33 +8,49 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { supabase } from "../../services/supabaseClient"; 
+import { supabase } from "../../services/supabaseClient"; // Import your Supabase client
 
-export default function LoginScreen({}) {
+export default function SignUpScreen({ }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = async () => {
+  const handleSignUp = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please fill in all fields.");
+      return;
+    }
+
     try {
-      const { user, error } = await supabase.auth.signInWithPassword({
+      // Sign up the user with email and password
+      const { error } = await supabase.auth.signUp({
         email,
         password,
       });
 
       if (error) throw error;
 
-      // Navigate to the main screen after successful login
-      Alert.alert("Success", "Logged in successfully!");
-      router.push("/screens/spacesScreen");
+      // Insert additional user details into the database
+      const { data, error: dbError } = await supabase
+        .from("users")
+        .insert([
+          {
+            email,
+          },
+        ]);
+
+      if (dbError) throw dbError;
+
+      Alert.alert("Success", "Account created successfully!");
+        router.push("/screens/loginScreen");
     } catch (error) {
-      Alert.alert("Login Failed", error.message);
+      Alert.alert("Sign Up Failed", error.message);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome Back</Text>
-      <Text style={styles.subtitle}>Log in to continue</Text>
+      <Text style={styles.title}>Create Account</Text>
+      <Text style={styles.subtitle}>Sign up to get started</Text>
 
       {/* Email Input */}
       <TextInput
@@ -58,17 +74,17 @@ export default function LoginScreen({}) {
         autoCapitalize="none"
       />
 
-      {/* Login Button */}
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.loginButtonText}>Log In</Text>
+      {/* Sign Up Button */}
+      <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
+        <Text style={styles.signUpButtonText}>Sign Up</Text>
       </TouchableOpacity>
 
-      {/* Signup Option */}
-      <Text style={styles.signupText}>
-        Don't have an account?{" "}
-        <Link href="/screens/signupScreen" style={styles.signupLink}>
-          Go to Signup
-        </Link>
+      {/* Login Option */}
+      <Text style={styles.loginText}>
+        Already have an account?{" "}
+        <Link href="/screens/loginScreen" style={styles.loginLink}>
+        Login
+      </Link>
       </Text>
     </View>
   );
@@ -102,7 +118,7 @@ const styles = StyleSheet.create({
     color: "black", // Black text for visibility
     fontSize: 16,
   },
-  loginButton: {
+  signUpButton: {
     width: "90%",
     backgroundColor: "#6D8299", // Soft gray button
     padding: 12,
@@ -110,17 +126,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 16,
   },
-  loginButtonText: {
+  signUpButtonText: {
     color: "white", // White text for contrast
     fontSize: 16,
     fontWeight: "bold",
   },
-  signupText: {
+  loginText: {
     marginTop: 16,
     color: "#6D8299", // Soft gray text
     fontSize: 14,
   },
-  signupLink: {
+  loginLink: {
     color: "black", // Black for clickable text
     fontWeight: "bold",
   },
