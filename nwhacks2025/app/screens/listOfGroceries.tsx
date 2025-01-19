@@ -164,6 +164,29 @@ export default function HouseFamFridgeScreen() {
       >
         <Text style={styles.addButtonText}>Add Food Entry</Text>
       </TouchableOpacity>
+
+      {/* Bottom Navigation */}
+      <View style={styles.bottomNav}>
+        <TouchableOpacity style={styles.navItem}>
+          <Ionicons name="basket-outline" size={24} color="black" />
+          <Text style={styles.navText}>Items</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem} onPress={() => router.push("/screens/recipeGeneration")}>
+          <Ionicons name="restaurant-outline" size={24} color="black" />
+          <Text style={styles.navText}>Recipes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => router.push("/screens/joinCommunity")}
+        >
+          <Ionicons name="people-outline" size={24} color="black" />
+          <Text style={styles.navText}>Communities</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem} onPress={() => router.push("/screens/settings")}>
+          <Ionicons name="settings-outline" size={24} color="black" />
+          <Text style={styles.navText}>Settings</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -233,7 +256,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     position: "absolute",
-    bottom: 20,
+    bottom: 80, // Above the bottom navigation
     left: 16,
     right: 16,
     alignItems: "center",
@@ -242,5 +265,26 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  bottomNav: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    backgroundColor: "#D9E6F2",
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: "#A2B9CE",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+  navItem: {
+    alignItems: "center",
+  },
+  navText: {
+    fontSize: 12,
+    color: "black",
+    marginTop: 4,
   },
 });

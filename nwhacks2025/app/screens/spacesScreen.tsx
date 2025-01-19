@@ -87,7 +87,7 @@ export default function Index() {
   return (
     <View style={styles.container}>
       {/* Top Bar */}
-      <Link href="/screens/enterNewItemOptions" asChild>
+      <Link href="/screens/addNewSpace" asChild>
       <View style={styles.topBar}>
         <Text style={styles.title}>Spaces</Text>
         <TouchableOpacity>
