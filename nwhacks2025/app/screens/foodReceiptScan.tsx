@@ -2,11 +2,11 @@ import { supabase } from '@/services/supabaseClient';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { View, Button, Image, Text, StyleSheet } from 'react-native';
-import { launchImageLibrary } from 'react-native-image-picker';  // Import Image Picker
-import Tesseract from 'tesseract.js';  // Import Tesseract.js for OCR
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 import { GEMINI_API_KEY } from '../env';
+import { Alert } from 'react-native';
 
-// TODO: make photo selecter compatible with ios simulator
 export default function FoodItemInput() {
   const [imageUri, setImageUri] = useState<string>('');
   const [groceryLog, setGroceryLog] = useState<string>('');
@@ -21,20 +21,52 @@ export default function FoodItemInput() {
     fetchUser();
   }, []);
 
-  const handleImagePick = () => {
-    launchImageLibrary(
-      {
-        mediaType: 'photo',
-        includeBase64: false,
-      },
-      (response) => {
-        if (response.assets && response.assets.length > 0) {
-          const uri = response.assets[0].uri ?? '';
-          setImageUri(uri); 
-          extractTextFromImage(uri); 
-        }
+  const handleImagePick = async () => {
+    // Request permission to access the media library
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission required', 'Sorry, we need camera roll permissions to make this work!');
+      return;
+    }
+
+    // Launch the image picker
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    // Check if the picker was canceled or an image was selected
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri); 
+      extractTextFromImage(result.assets[0].uri);
+    }
+  };
+  
+  const extractTextFromImage = async (imagePath: string) => {
+    try {
+      const base64 = await FileSystem.readAsStringAsync(imagePath, { encoding: 'base64' });
+  
+      const response = await fetch('http://localhost:3000/extract-text', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ base64Image: base64 }),
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
       }
-    );
+  
+      const result = await response.json();
+      readGroceriesFromReceipt(result["text"]);
+    } catch (error) {
+      console.error('Error extracting text from image:', error);
+      throw error;
+    }
   };
 
   const readGroceriesFromReceipt = async (receiptText: string) => {
@@ -56,8 +88,12 @@ export default function FoodItemInput() {
       const responseText = response.data["candidates"][0]["content"]["parts"][0]["text"];
       const groceriesJSON = JSON.parse(responseText);
 
+      if (groceriesJSON == undefined) {
+        Alert.alert("Something went wrong! Please try again.");
+      }
+
       let groceryLog = "";
-      groceriesJSON.forEach(async (g) => {
+      const promises = groceriesJSON.map(async (g) => {
         g["status"] = calculateStatus(g["expiration_date"]);
         g["user_id"] = userId;
 
@@ -74,9 +110,15 @@ export default function FoodItemInput() {
 
         groceryLog += `Added ${g["name"]} (expires on ${g["expiration_date"]})\n`;
       });
-      
-      console.log(groceryLog);
-      setGroceryLog(groceryLog);
+
+      Promise.all(promises)
+        .then(() => {
+          setGroceryLog(groceryLog);
+          console.log("LOG : " + groceryLog);
+        })
+        .catch((error) => {
+          console.error('Error unable to read Groceries:', error);
+        });
     } catch (error) {
       console.error('Error unable to read Groceries:', error);
     }
@@ -92,34 +134,16 @@ export default function FoodItemInput() {
     return "all";
   };
 
-  const extractTextFromImage = (imagePath: string) => {
-    Tesseract.recognize(
-      imagePath, 
-      'eng',
-      {
-        logger: (m) => console.log(m),
-      }
-    )
-      .then((result) => {
-        const text = result.data.text;
-        console.log('Extracted Text: ', text);
-        readGroceriesFromReceipt(text);   
-      })
-      .catch((err) => {
-        console.error('OCR Error: ', err);
-      });
-  };
-
   return (
     <View style={styles.container}>
-      <Button title="Select Receipt" onPress={handleImagePick} />
-      {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
-      {groceryLog ? (
-        <View style={styles.textContainer}>
-          <Text style={styles.extractedText}>Added:  </Text>
-          <Text>{groceryLog}</Text>
-        </View>
-      ) : null}
+      <View style={styles.buttonContainer}>
+        <Button title="Select Receipt from Photos.." onPress={handleImagePick} />
+        {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
+      </View>
+      <View style={styles.textContainer}>
+        <Text style={styles.extractedText}>Detected Groceries:</Text>
+        {groceryLog ? <Text>{groceryLog}</Text> : null}
+      </View>
     </View>
   );
 }
@@ -127,8 +151,14 @@ export default function FoodItemInput() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingTop: '10%', // Adjust padding to position content in the top half
+  },
+  buttonContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 20, // Add space between buttonContainer and textContainer
   },
   image: {
     width: 200,
@@ -136,10 +166,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   textContainer: {
-    marginTop: 20,
+    width: '80%', // Adjust width as needed
     padding: 10,
     backgroundColor: '#f0f0f0',
     borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 20, // Add space between image and textContainer
   },
   extractedText: {
     fontWeight: 'bold',
