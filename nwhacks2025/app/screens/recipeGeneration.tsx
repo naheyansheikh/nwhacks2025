@@ -1,12 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, Button, TextInput } from "react-native";
 import axios from 'axios';
-
-const GEMINI_API_KEY = "CHANGE"; // Replace with your actual API key
+import { supabase } from "@/services/supabaseClient";
+import { GEMINI_API_KEY } from "../env";
 
 export default function RecipeGeneratorScreen() {
   const [groceries, setGroceries] = useState<string>('');
   const [recipe, setRecipe] = useState<string>('');
+
+  useEffect(() => {
+    const fetchGroceries = async () => {
+      const { data } = await supabase
+        .from('groceries')
+        .select("*");
+      setGroceries(data.map(d => d.name));
+    };
+
+    fetchGroceries();
+  }, []);
 
   const generateRecipe = async () => {
     const prompt = `Create a recipe using the following ingredients: ${groceries} only list ingredients and steps and keep in concise`;
@@ -46,25 +57,50 @@ export default function RecipeGeneratorScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#B0C4DE",
-    padding: 16,
+    backgroundColor: "#F5F5F5",
+    padding: 20,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 16,
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 20,
+    textAlign: 'center',
   },
   input: {
-    backgroundColor: "#D9E6F2",
-    padding: 12,
+    height: 50,
+    borderColor: '#ccc',
+    borderWidth: 1,
     borderRadius: 8,
-    marginBottom: 16,
+    paddingHorizontal: 10,
+    marginBottom: 20,
+    backgroundColor: '#fff',
   },
-  recipeTitle: {
-    marginTop: 20,
+  button: {
+    backgroundColor: '#007BFF',
+    paddingVertical: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
     fontWeight: 'bold',
   },
+  recipeTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
   recipe: {
-    marginTop: 10,
+    fontSize: 16,
+    color: '#555',
+    lineHeight: 24,
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 8,
   },
 });
