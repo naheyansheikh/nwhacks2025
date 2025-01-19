@@ -97,7 +97,7 @@ export default function HouseFamFridgeScreen() {
       case "all":
         return "#4CAF50";
       case "expiring-soon":
-        return "#FFD93D";
+        return "#D6B222";
       case "expired":
         return "#FF6B6B";
       default:
