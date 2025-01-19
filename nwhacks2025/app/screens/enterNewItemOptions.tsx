@@ -21,11 +21,13 @@ export default function ReceiptOptionsScreen() {
 
       {/* Options Container */}
       <View style={styles.optionsContainer}>
-        <Text style={styles.subtitle}>How would you like to add your receipt?</Text>
+        <Text style={styles.subtitle}>How would you like to add your item?</Text>
 
+        <Link href="/screens/foodItemInput" asChild>
         <TouchableOpacity style={styles.optionButton}>
-          <Text style={styles.optionButtonText}>Take a Picture</Text>
+          <Text style={styles.optionButtonText}>Upload Receipt</Text>
         </TouchableOpacity>
+        </Link>
 
         <Link href="/screens/foodEntry" asChild>
           <TouchableOpacity style={styles.optionButton}>
