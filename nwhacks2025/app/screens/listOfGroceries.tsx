@@ -1,15 +1,7 @@
 import React, { useState } from "react";
 import { Text, View, StyleSheet, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-
-// Define the types for navigation props
-type RootStackParamList = {
-  GroceryList: undefined;
-  Spaces: undefined;
-};
-
-type Props = NativeStackScreenProps<RootStackParamList, "GroceryList">;
+import { Link } from "expo-router";
 
 // Sample grocery data
 const GROCERIES = [
@@ -18,7 +10,7 @@ const GROCERIES = [
   { name: "Sweet Tea", expiration: "2025-03-01", status: "all" },
 ];
 
-export default function GroceryListScreen({ navigation }: Props) {
+export default function GroceryListScreen() {
   const categorizeGroceries = (status: string) =>
     GROCERIES.filter((item) => item.status === status);
 
@@ -26,12 +18,9 @@ export default function GroceryListScreen({ navigation }: Props) {
     <View style={styles.container}>
       {/* Top Bar */}
       <View style={styles.topBar}>
-        <Ionicons
-          name="arrow-back-outline"
-          size={24}
-          color="black"
-          onPress={() => navigation.goBack()}
-        />
+        <Link href="/screens/spacesScreen" style={styles.link}>
+          <Ionicons name="arrow-back-outline" size={24} color="black" />
+        </Link>
         <Text style={styles.title}>Fridge</Text>
       </View>
 
@@ -67,7 +56,13 @@ export default function GroceryListScreen({ navigation }: Props) {
               <View style={styles.groceryItem}>
                 <Text style={styles.groceryText}>{item.name}</Text>
                 <Text style={styles.expirationSubtext}>
-                  Expires in {Math.ceil((new Date(item.expiration).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days
+                  Expires in{" "}
+                  {Math.ceil(
+                    (new Date(item.expiration).getTime() -
+                      new Date().getTime()) /
+                      (1000 * 60 * 60 * 24)
+                  )}{" "}
+                  days
                 </Text>
               </View>
             )}
@@ -157,5 +152,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#6D8299",
     textAlign: "center",
+  },
+  link: {
+    paddingHorizontal: 8,
   },
 });

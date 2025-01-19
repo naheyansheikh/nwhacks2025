@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons"; // Install expo-icons if not already installed
 import { useRouter } from "expo-router"; // For navigation
+import { Link } from "expo-router";
 
 export default function Index() {
   const router = useRouter(); // Router hook for navigation
@@ -35,10 +36,10 @@ export default function Index() {
       {/* Fridge Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Fridge</Text>
-        <TouchableOpacity>
-          <Ionicons name="chevron-forward" size={20} color="black" />
-        </TouchableOpacity>
-      </View>
+          <Link href="/screens/listOfGroceries" style={styles.link}>
+            <Ionicons name="chevron-forward" size={20} color="black" />
+          </Link>
+        </View>
 
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
@@ -122,5 +123,8 @@ const styles = StyleSheet.create({
     color: "black", // Black text for buttons
     fontSize: 12,
     marginTop: 4,
+  },
+  link: {
+    paddingHorizontal: 8,
   },
 });

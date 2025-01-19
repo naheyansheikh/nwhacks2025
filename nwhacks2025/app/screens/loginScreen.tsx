@@ -39,7 +39,10 @@ export default function LoginScreen() {
       />
 
       {/* Login Button */}
-      <TouchableOpacity style={styles.loginButton}>
+      <TouchableOpacity 
+        style={styles.loginButton}
+        
+      >
         <Text style={styles.loginButtonText}>Log In</Text>
       </TouchableOpacity>
 
