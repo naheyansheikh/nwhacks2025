@@ -121,10 +121,14 @@ export default function CommunityDetails() {
 
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem}>
-          <Ionicons name="basket-outline" size={24} color="black" />
-          <Text style={styles.navText}>Items</Text>
-        </TouchableOpacity>
+      <TouchableOpacity 
+        style={styles.navItem}
+        onPress={() => router.push("/screens/listOfGroceries")}
+      >
+        <Ionicons name="basket-outline" size={24} color="black" />
+        <Text style={styles.navText}>Items</Text>
+      </TouchableOpacity>
+
         <TouchableOpacity
           style={styles.navItem}
           onPress={() => router.push("/screens/recipeGeneration")}
