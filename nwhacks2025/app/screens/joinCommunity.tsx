@@ -164,7 +164,7 @@ export default function CommunitiesScreen() {
 
     return (
         <View style={styles.container}>
-            <View style={styles.topBar}>
+            {/* <View style={styles.topBar}>
                 <TouchableOpacity
                     onPress={() => {
                         if (router.canGoBack()) {
@@ -179,7 +179,7 @@ export default function CommunitiesScreen() {
                 </TouchableOpacity>
                 <Text style={styles.title}>Communities</Text>
                 <View style={{ flex: 1 }} />
-            </View>
+            </View> */}
 
             <View style={styles.joinCodeContainer}>
                 <Ionicons name="people-outline" size={48} color="#6D8299" style={styles.communityIcon} />

@@ -109,17 +109,6 @@ export default function HouseFamFridgeScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Top Bar */}
-      {/* <View style={styles.topBar}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.touchableArea}
-        >
-          <Ionicons name="arrow-back-outline" size={24} color="black" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Fridge</Text>
-      </View> */}
-
       {/* Food Categories */}
       <ScrollView style={styles.scrollContainer}>
         {Object.keys(categorizedGroceries).map((category) => (
@@ -172,21 +161,22 @@ export default function HouseFamFridgeScreen() {
         ))}
       </ScrollView>
 
-      {/* Add Food Entry Button */}
-      <TouchableOpacity 
-        style={styles.addButton}
-        onPress={() => router.push("/screens/foodEntry")}
-      >
-        <Text style={styles.addButtonText}>Add Food Entry</Text>
-      </TouchableOpacity>
-      
-      // TODO: fix styling so that BOTH buttons show at the bottom
-      <TouchableOpacity 
-        style={styles.receiptButton}
-        onPress={() => router.push("/screens/foodReceiptScan")}
-      >
-        <Text style={styles.addButtonText}>Scan Receipt</Text>
-      </TouchableOpacity>
+      {/* Buttons Container */}
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity 
+          style={styles.addButton}
+          onPress={() => router.push("/screens/foodEntry")}
+        >
+          <Text style={styles.addButtonText}>Add Food Entry</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.receiptButton}
+          onPress={() => router.push("/screens/foodReceiptScan")}
+        >
+          <Text style={styles.addButtonText}>Scan Receipt</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
@@ -218,21 +208,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#B0C4DE",
-  },
-  topBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#A2B9CE",
-  },
-  title: {
-    fontSize: 18,
-    color: "black",
-    fontWeight: "bold",
-    textAlign: "center",
-    flex: 1,
   },
   scrollContainer: {
     flex: 1,
@@ -271,27 +246,27 @@ const styles = StyleSheet.create({
   expirationText: {
     fontSize: 14,
   },
-  touchableArea: {
-    padding: 12,
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 16,
+    position: "absolute",
+    bottom: 70, // Above the bottom navigation
+    width: "100%",
   },
   addButton: {
+    flex: 1,
     backgroundColor: "#6D8299",
-    padding: 16,
+    padding: 12,
     borderRadius: 8,
-    position: "absolute",
-    bottom: 80, // Above the bottom navigation
-    left: 16,
-    right: 16,
+    marginRight: 8,
     alignItems: "center",
   },
   receiptButton: {
+    flex: 1,
     backgroundColor: "#6D8299",
-    padding: 16,
+    padding: 12,
     borderRadius: 8,
-    position: "absolute",
-    bottom: 150, // Above the bottom navigation
-    left: 16,
-    right: 16,
     alignItems: "center",
   },
   addButtonText: {

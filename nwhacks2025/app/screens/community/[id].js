@@ -9,48 +9,41 @@ export default function CommunityDetails() {
   const [community, setCommunity] = useState(null);
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [soonToExpireFoods, setSoonToExpireFoods] = useState({}); // Foods grouped by user_id
 
   useEffect(() => {
     const fetchCommunityAndMembers = async () => {
       try {
         if (id) {
-          // Fetch the community details
           const { data: communityData, error: communityError } = await supabase
-            .from('communities')
-            .select('*')
-            .eq('id', Number(id)) // Convert id to a number if the column is integer-based
+            .from("communities")
+            .select("*")
+            .eq("id", Number(id))
             .single();
 
           if (communityError) {
-            console.error('Error fetching community:', communityError);
-            setError('Community not found.');
+            setError("Community not found.");
             setLoading(false);
             return;
           }
 
           setCommunity(communityData);
 
-          // Fetch all members of the community
           const { data: membersData, error: membersError } = await supabase
-            .from('community_members')
-            .select('user_id')
-            .eq('community_id', Number(id));
+            .from("community_members")
+            .select("user_id")
+            .eq("community_id", Number(id));
 
           if (membersError) {
-            console.error('Error fetching members:', membersError);
-            setError('Error fetching members.');
+            setError("Error fetching members.");
           } else {
             setMembers(membersData);
-
-            // Fetch soon-to-expire foods for each member
             await fetchSoonToExpireFoods(membersData);
           }
         }
       } catch (e) {
-        console.error('Unexpected error:', e);
-        setError('An unexpected error occurred.');
+        setError("An unexpected error occurred.");
       } finally {
         setLoading(false);
       }
@@ -60,22 +53,20 @@ export default function CommunityDetails() {
       const groceriesByMember = {};
 
       for (const member of membersData) {
-        // Fetch groceries for the user
         const { data: groceries, error: groceriesError } = await supabase
-          .from('groceries')
-          .select('*')
-          .eq('user_id', member.user_id);
+          .from("groceries")
+          .select("*")
+          .eq("user_id", member.user_id);
 
         if (groceriesError) {
-          console.error(`Error fetching groceries for user ${member.user_id}:`, groceriesError);
           groceriesByMember[member.user_id] = [];
         } else {
-          // Filter for soon-to-expire groceries (e.g., expiring within the next 7 days)
           const soonExpiringGroceries = groceries.filter((grocery) => {
             const expirationDate = new Date(grocery.expiration_date);
             const now = new Date();
-            const daysUntilExpiration = (expirationDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
-            return daysUntilExpiration >= 0 && daysUntilExpiration <= 7; // Change the range as needed
+            const daysUntilExpiration =
+              (expirationDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+            return daysUntilExpiration >= 0 && daysUntilExpiration <= 7;
           });
 
           groceriesByMember[member.user_id] = soonExpiringGroceries;
@@ -95,30 +86,36 @@ export default function CommunityDetails() {
     <ScrollView style={styles.container}>
       <View>
         <Text style={styles.title}>{community?.name}</Text>
-        <Text>Code: {community?.code}</Text>
-        <Text>Created At: {new Date(community?.created_at).toLocaleString()}</Text>
+        <Text style={styles.info}>Code: {community?.code}</Text>
+        {/* <Text style={styles.info}>
+          Created At: {new Date(community?.created_at).toLocaleString()}
+        </Text> */}
 
         <Text style={styles.subtitle}>Community Members</Text>
         {members.length > 0 ? (
           members.map((member) => (
             <View key={member.user_id} style={styles.memberSection}>
               <Text style={styles.memberHeader}>Member ID: {member.user_id}</Text>
-              {soonToExpireFoods[member.user_id] && soonToExpireFoods[member.user_id].length > 0 ? (
+              {soonToExpireFoods[member.user_id] &&
+              soonToExpireFoods[member.user_id].length > 0 ? (
                 soonToExpireFoods[member.user_id].map((food) => (
                   <View key={food.id} style={styles.foodItem}>
                     <Text style={styles.foodName}>Food: {food.name}</Text>
                     <Text style={styles.foodExpiration}>
-                      Expiration Date: {new Date(food.expiration_date).toLocaleDateString()}
+                      Expiration Date:{" "}
+                      {new Date(food.expiration_date).toLocaleDateString()}
                     </Text>
                   </View>
                 ))
               ) : (
-                <Text>No soon-to-expire foods.</Text>
+                <Text style={styles.noFoodsText}>No soon-to-expire foods.</Text>
               )}
             </View>
           ))
         ) : (
-          <Text>No members in this community yet.</Text>
+          <Text style={styles.noMembersText}>
+            No members in this community yet.
+          </Text>
         )}
       </View>
     </ScrollView>
@@ -128,41 +125,62 @@ export default function CommunityDetails() {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: "#B0C4DE", // Match the pastel blue theme
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "bold",
+    color: "black",
     marginBottom: 8,
+    textAlign: "center",
+  },
+  info: {
+    fontSize: 16,
+    color: "#6D8299", // Subtle gray text
+    marginBottom: 8,
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 20,
     fontWeight: "bold",
+    color: "#4B5563", // Dark gray for section headers
     marginBottom: 16,
+    textAlign: "center",
   },
   memberSection: {
     marginBottom: 16,
-    padding: 8,
-    backgroundColor: "#E5E7EB",
+    padding: 16,
+    backgroundColor: "#D9E6F2", // Light pastel blue for member sections
     borderRadius: 8,
   },
   memberHeader: {
     fontSize: 18,
     fontWeight: "bold",
+    color: "#4B5563",
     marginBottom: 8,
   },
   foodItem: {
-    padding: 8,
-    backgroundColor: "#D1D5DB",
+    padding: 12,
+    backgroundColor: "#E8F0F8", // Lighter blue for food items
     borderRadius: 8,
     marginBottom: 8,
   },
   foodName: {
     fontSize: 16,
     fontWeight: "bold",
+    color: "black",
   },
   foodExpiration: {
     fontSize: 14,
     color: "#4B5563",
+  },
+  noFoodsText: {
+    fontSize: 14,
+    color: "#6D8299",
+  },
+  noMembersText: {
+    fontSize: 16,
+    color: "#6D8299",
+    textAlign: "center",
   },
 });

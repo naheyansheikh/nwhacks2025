@@ -69,6 +69,12 @@ export default function RootLayout() {
           headerTitle: "Receipt Scanner", // Receipt Scanner
         }}
       />
+      <Stack.Screen
+        name="screens/community/[id]"
+        options={{
+          headerTitle: "Your Community", // Receipt Scanner
+        }}
+      />
     </Stack>
 
   );
