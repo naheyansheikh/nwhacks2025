@@ -52,7 +52,7 @@ export default function Index() {
           <Ionicons name="people-outline" size={24} color="black" />
           <Text style={styles.navText}>Communities</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => router.push("/screens/settings")}>
           <Ionicons name="settings-outline" size={24} color="black" />
           <Text style={styles.navText}>Settings</Text>
         </TouchableOpacity>

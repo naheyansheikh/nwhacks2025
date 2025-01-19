@@ -3,35 +3,44 @@ import {
   Text, 
   View, 
   StyleSheet, 
-  TouchableOpacity 
+  TouchableOpacity, 
+  Image 
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
 
-export default function ReceiptOptionsScreen() {
+export default function SettingsScreen() {
   return (
     <View style={styles.container}>
       {/* Top Bar */}
       <View style={styles.topBar}>
-      <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back-outline" size={24} color="black" />
         </TouchableOpacity>
-        <Text style={styles.title}>Receipt Options</Text>
+        <Text style={styles.title}>Settings</Text>
       </View>
 
       {/* Options Container */}
       <View style={styles.optionsContainer}>
-        <Text style={styles.subtitle}>How would you like to add your item?</Text>
+        <Text style={styles.subtitle}>Manage your account settings</Text>
 
-        <Link href="/screens/foodItemInput" asChild>
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={styles.optionButtonText}>Upload Receipt</Text>
+        {/* Profile Section */}
+        <TouchableOpacity style={styles.profileButton}>
+          <View style={styles.avatarContainer}>
+            <Ionicons name="person-circle-outline" size={80} color="#6D8299" />
+          </View>
+          <Text style={styles.optionButtonText}>Set Profile</Text>
         </TouchableOpacity>
-        </Link>
 
-        <Link href="/screens/foodEntry" asChild>
+        {/* Reset Password Section */}
+        <TouchableOpacity style={styles.optionButton}>
+          <Text style={styles.optionButtonText}>Reset Password</Text>
+        </TouchableOpacity>
+
+        {/* FAQ Section */}
+        <Link href="/screens/faq" asChild>
           <TouchableOpacity style={styles.optionButton}>
-            <Text style={styles.optionButtonText}>Enter Manually</Text>
+            <Text style={styles.optionButtonText}>FAQ</Text>
           </TouchableOpacity>
         </Link>
       </View>
@@ -87,5 +96,20 @@ const styles = StyleSheet.create({
     color: "white", // White text for contrast
     fontSize: 16,
     fontWeight: "bold",
+  },
+  profileButton: {
+    width: "90%",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  avatarContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 2,
+    borderColor: "#6D8299", // Border color for the empty avatar circle
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 8,
   },
 });
