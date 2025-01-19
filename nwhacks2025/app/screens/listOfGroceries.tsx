@@ -164,6 +164,14 @@ export default function HouseFamFridgeScreen() {
       >
         <Text style={styles.addButtonText}>Add Food Entry</Text>
       </TouchableOpacity>
+      
+      // TODO: fix styling so that BOTH buttons show at the bottom
+      <TouchableOpacity 
+        style={styles.addButton}
+        onPress={() => router.push("/screens/foodReceiptScan")}
+      >
+        <Text style={styles.addButtonText}>Scan Receipt</Text>
+      </TouchableOpacity>
 
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
