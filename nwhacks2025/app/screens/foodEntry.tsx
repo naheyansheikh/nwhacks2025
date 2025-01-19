@@ -64,7 +64,7 @@ export default function AddFoodItemScreen() {
   return (
     <View style={styles.container}>
       {/* Top Bar */}
-      <View style={styles.topBar}>
+      {/* <View style={styles.topBar}>
       <TouchableOpacity
           onPress={() => {
             console.log("Back button pressed");
@@ -79,7 +79,7 @@ export default function AddFoodItemScreen() {
           <Ionicons name="arrow-back-outline" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.title}>Add Food Item</Text>
-      </View>
+      </View> */}
 
       {/* Food Input Container */}
       <View style={styles.inputContainer}>

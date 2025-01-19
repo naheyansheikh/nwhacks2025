@@ -63,6 +63,12 @@ export default function RootLayout() {
           headerTitle: "FAQ", // FAQ
         }}
       />
+      <Stack.Screen
+        name="screens/foodReceiptScan"
+        options={{
+          headerTitle: "Receipt Scanner", // Receipt Scanner
+        }}
+      />
     </Stack>
 
   );

@@ -33,6 +33,10 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
+      {/* App Title */}
+      <Text style={styles.appTitle}>FreshTrack</Text>
+
+      {/* Welcome Back Section */}
       <Text style={styles.title}>Welcome Back</Text>
       <Text style={styles.subtitle}>Log in to continue</Text>
 
@@ -82,11 +86,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#B0C4DE",
     padding: 16,
   },
+  appTitle: {
+    fontSize: 50, // Bigger font size
+    fontWeight: "bold",
+    color: "#6D8299",
+    marginTop: 10,
+    top: 10, // Move it higher up
+  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: "black",
     marginBottom: 8,
+    marginTop: 50, // Add margin to adjust placement under FreshTrack
   },
   subtitle: {
     fontSize: 16,

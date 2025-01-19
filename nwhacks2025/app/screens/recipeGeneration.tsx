@@ -57,49 +57,51 @@ export default function RecipeGeneratorScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#B0C4DE", // Match the pastel blue background
     padding: 20,
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "black",
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   input: {
     height: 50,
-    borderColor: '#ccc',
+    borderColor: "#A2B9CE", // Slightly darker pastel blue for borders
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#D9E6F2", // Lighter pastel blue for input field
+    color: "black", // Black input text
   },
   button: {
-    backgroundColor: '#007BFF',
+    backgroundColor: "#6D8299", // Soft gray for the button
     paddingVertical: 15,
     borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 20,
+    alignItems: "center",
+    marginBottom: 40, // Add more space below the button
   },
   buttonText: {
-    color: '#fff',
+    color: "white", // White text for contrast
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   recipeTitle: {
     fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "black",
     marginBottom: 10,
-    textAlign: 'center',
+    textAlign: "center",
+    marginTop: 40, // Add space above the recipe title
   },
   recipe: {
     fontSize: 16,
-    color: '#555',
+    color: "black", // Black text for recipe details
     lineHeight: 24,
-    backgroundColor: '#fff',
+    backgroundColor: "#D9E6F2", // Match input field color
     padding: 10,
     borderRadius: 8,
   },
