@@ -41,7 +41,7 @@ export default function SignUpScreen({ }) {
       if (dbError) throw dbError;
 
       Alert.alert("Success", "Account created successfully!");
-        router.push("/screens/loginScreen");
+        router.push("/");
     } catch (error) {
       Alert.alert("Sign Up Failed", error.message);
     }
@@ -82,7 +82,7 @@ export default function SignUpScreen({ }) {
       {/* Login Option */}
       <Text style={styles.loginText}>
         Already have an account?{" "}
-        <Link href="/screens/loginScreen" style={styles.loginLink}>
+        <Link href="/" style={styles.loginLink}>
         Login
       </Link>
       </Text>

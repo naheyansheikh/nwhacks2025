@@ -115,7 +115,7 @@ export default function Index() {
           <Ionicons name="basket-outline" size={24} color="black" />
           <Text style={styles.navText}>Spaces</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => router.push("/screens/recipeGeneration")}>
           <Ionicons name="restaurant-outline" size={24} color="black" />
           <Text style={styles.navText}>Recipes</Text>
         </TouchableOpacity>
